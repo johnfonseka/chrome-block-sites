@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulated Chrome Page Blocker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInAnonymously,
+        signInWithCustomToken,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        onSnapshot,
+        collection,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+      import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // setLogLevel('Debug'); // Uncomment for debugging Firebase
+
+      const appId =
+        typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+      const firebaseConfig = JSON.parse(
+        typeof __firebase_config !== "undefined" ? __firebase_config : "{}"
+      );
+      const initialAuthToken =
+        typeof __initial_auth_token !== "undefined"
+          ? __initial_auth_token
+          : null;
+
+      let db,
+        auth,
+        userId = null;
+      let isAuthReady = false;
+
+      const STATE = {
+        password: "",
+        blockedUrls: [],
+        isBlocked: false,
+        currentUrlToTest: "",
+        message: "",
+        blockAttemptPassword: "",
+      };
+
+      const elements = {
+        loading: document.getElementById("loading-state"),
+        appContent: document.getElementById("app-content"),
+        settingsPanel: document.getElementById("settings-panel"),
+        blockedPanel: document.getElementById("blocked-panel"),
+        urlInput: document.getElementById("url-to-test"),
+        urlInputTest: document.getElementById("url-input-test"),
+        passwordInput: document.getElementById("new-password"),
+        blockedUrlsTextarea: document.getElementById("blocked-urls"),
+        messageBox: document.getElementById("message-box"),
+        blockAttemptPasswordInput: document.getElementById(
+          "block-attempt-password"
+        ),
+      };
+
+      // Utility function to convert user input list to array
+      const parseUrls = (text) =>
+        text
+          .split("\n")
+          .map((url) => url.trim())
+          .filter((url) => url.length > 0);
+      const urlsToString = (urls) => urls.join("\n");
+
+      // --- Firebase Initialization and Authentication ---
+      const initFirebase = async () => {
+        try {
+          const app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+          auth = getAuth(app);
+
+          if (initialAuthToken) {
+            await signInWithCustomToken(auth, initialAuthToken);
+          } else {
+            await signInAnonymously(auth);
+          }
+
+          onAuthStateChanged(auth, (user) => {
+            userId = user ? user.uid : crypto.randomUUID();
+            isAuthReady = true;
+            console.log("Auth ready. User ID:", userId);
+            startRealtimeListener();
+            renderUI(); // Initial render after auth
+          });
+        } catch (error) {
+          console.error("Error initializing Firebase:", error);
+          STATE.message =
+            "Failed to initialize Firebase. Please check console.";
+          renderUI();
+        }
+      };
+
+      // --- Firestore Realtime Listener ---
+      const getConfigDocRef = () => {
+        if (!db || !userId) return null;
+        // Public data collection for simplicity, using userId for document ID
+        return doc(
+          collection(
+            db,
+            `artifacts/${appId}/users/${userId}/page_blocker_settings`
+          ),
+          "config"
+        );
+      };
+
+      const startRealtimeListener = () => {
+        const docRef = getConfigDocRef();
+        if (!docRef) return;
+
+        onSnapshot(
+          docRef,
+          (docSnap) => {
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              STATE.password = data.password || "";
+              STATE.blockedUrls = data.blockedUrls || [];
+              console.log(
+                "Settings loaded:",
+                STATE.blockedUrls.length,
+                "blocked URLs."
+              );
+            } else {
+              // Document does not exist, initialize with default values
+              STATE.password = "";
+              STATE.blockedUrls = [];
+              console.log("Settings document not found, using default state.");
+            }
+            // Update UI state based on the current configuration
+            elements.passwordInput.value = STATE.password;
+            elements.blockedUrlsTextarea.value = urlsToString(
+              STATE.blockedUrls
+            );
+            checkBlockStatus();
+            renderUI();
+          },
+          (error) => {
+            console.error("Error listening to config:", error);
+            STATE.message =
+              "Realtime connection failed. Check console for details.";
+            renderUI();
+          }
+        );
+      };
+
+      // --- Logic Handlers ---
+
+      const saveSettings = async () => {
+        const docRef = getConfigDocRef();
+        if (!docRef) {
+          STATE.message = "System not ready. Please wait for initialization.";
+          renderUI();
+          return;
+        }
+
+        const newPassword = elements.passwordInput.value.trim();
+        const newUrls = parseUrls(elements.blockedUrlsTextarea.value);
+
+        try {
+          await setDoc(
+            docRef,
+            {
+              password: newPassword,
+              blockedUrls: newUrls,
+              lastUpdated: new Date().toISOString(),
+            },
+            { merge: false }
+          );
+
+          STATE.message = "Settings saved successfully!";
+          // STATE variables will update via onSnapshot listener
+        } catch (error) {
+          console.error("Error saving settings:", error);
+          STATE.message = `Failed to save settings: ${error.message}`;
+        }
+        renderUI();
+        setTimeout(() => {
+          STATE.message = "";
+          renderUI();
+        }, 3000);
+      };
+
+      const checkBlockStatus = () => {
+        const url = elements.urlInputTest.value.trim();
+        STATE.currentUrlToTest = url;
+
+        if (url === "") {
+          STATE.isBlocked = false;
+          STATE.message = "Enter a URL to test the blocker.";
+          renderUI();
+          return;
+        }
+
+        const shouldBlock = STATE.blockedUrls.some((blockedUrl) =>
+          url.includes(blockedUrl)
+        );
+
+        if (shouldBlock) {
+          STATE.isBlocked = true;
+          STATE.message = `Attempting to navigate to "${url}"... Access Denied.`;
+        } else {
+          STATE.isBlocked = false;
+          STATE.message = `Attempting to navigate to "${url}"... Access Allowed.`;
+        }
+        STATE.blockAttemptPassword = ""; // Reset password field
+        renderUI();
+      };
+
+      const attemptUnblock = (event) => {
+        event.preventDefault();
+        const enteredPassword = elements.blockAttemptPasswordInput.value.trim();
+        STATE.blockAttemptPassword = enteredPassword;
+
+        if (enteredPassword === STATE.password && STATE.password.length > 0) {
+          STATE.isBlocked = false;
+          STATE.message = `SUCCESS! Unblocked for: ${STATE.currentUrlToTest}`;
+          elements.urlInputTest.value = ""; // Clear test URL after success
+          STATE.currentUrlToTest = "";
+        } else {
+          STATE.message = "INCORRECT PASSWORD. Access remains blocked.";
+        }
+        renderUI();
+      };
+
+      // --- UI Renderer ---
+
+      const renderUI = () => {
+        if (!isAuthReady) {
+          elements.loading.classList.remove("hidden");
+          elements.appContent.classList.add("hidden");
+          return;
+        }
+
+        elements.loading.classList.add("hidden");
+        elements.appContent.classList.remove("hidden");
+
+        elements.messageBox.textContent = STATE.message;
+        elements.messageBox.classList.toggle(
+          "bg-red-100",
+          STATE.message.includes("Denied") ||
+            STATE.message.includes("INCORRECT")
+        );
+        elements.messageBox.classList.toggle(
+          "bg-green-100",
+          STATE.message.includes("Allowed") || STATE.message.includes("SUCCESS")
+        );
+        elements.messageBox.classList.toggle(
+          "bg-blue-100",
+          STATE.message.includes("Enter")
+        );
+
+        // Show Blocked Panel or Settings Panel
+        elements.settingsPanel.classList.toggle("hidden", STATE.isBlocked);
+        elements.blockedPanel.classList.toggle("hidden", !STATE.isBlocked);
+
+        if (STATE.isBlocked) {
+          document.getElementById("blocked-url-display").textContent =
+            STATE.currentUrlToTest;
+          elements.blockAttemptPasswordInput.value = STATE.blockAttemptPassword;
+        }
+      };
+
+      // --- Event Listeners ---
+      window.addEventListener("load", () => {
+        initFirebase();
+
+        // Attach listeners to static UI elements
+        document
+          .getElementById("save-button")
+          .addEventListener("click", saveSettings);
+        document
+          .getElementById("test-button")
+          .addEventListener("click", checkBlockStatus);
+        document
+          .getElementById("unblock-form")
+          .addEventListener("submit", attemptUnblock);
+      });
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+      .card {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      textarea,
+      input[type="text"],
+      input[type="password"] {
+        transition: all 0.2s;
+        border: 2px solid #e5e7eb;
+      }
+      textarea:focus,
+      input[type="text"]:focus,
+      input[type="password"]:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+      .btn-primary {
+        transition: background-color 0.2s, transform 0.1s;
+      }
+      .btn-primary:hover {
+        background-color: #2563eb;
+        transform: translateY(-1px);
+      }
+      .btn-primary:active {
+        background-color: #1e40af;
+        transform: translateY(1px);
+      }
+    </style>
+  </head>
+  <body class="p-4 sm:p-8 min-h-screen flex items-start justify-center">
+    <div class="w-full max-w-2xl mt-8">
+      <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
+        🔒 Simulated Page Blocker Dashboard
+      </h1>
+      <p class="text-center text-gray-500 mb-8">
+        This application simulates the core password and URL blocking logic of a
+        Chrome extension, using Firestore for persistence.
+        <span class="text-xs block mt-2 text-gray-400"
+          >Your User ID: <span id="user-id-display">Loading...</span></span
+        >
+      </p>
+
+      <!-- Loading State -->
+      <div
+        id="loading-state"
+        class="flex flex-col items-center justify-center p-12 card bg-white rounded-xl"
+      >
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"
+        ></div>
+        <p class="mt-4 text-lg text-indigo-600 font-medium">
+          Connecting to Secret Vault...
+        </p>
+      </div>
+
+      <!-- Message Box -->
+      <div
+        id="message-box"
+        class="p-3 mb-6 font-medium rounded-lg text-center transition-all duration-300 border border-gray-300"
+        style="min-height: 48px"
+      >
+        Enter a URL to begin testing.
+      </div>
+
+      <!-- Main Application Content -->
+      <div id="app-content" class="hidden">
+        <!-- URL Test Input -->
+        <div class="mb-8 p-6 bg-white card rounded-xl">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Test Page Block</h2>
+          <div class="flex space-x-2">
+            <input
+              type="text"
+              id="url-input-test"
+              placeholder="e.g. youtube.com or netflix.com"
+              class="flex-grow p-3 rounded-lg w-full text-gray-700"
+            />
+            <button
+              id="test-button"
+              class="btn-primary px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700"
+            >
+              Test URL
+            </button>
+          </div>
+        </div>
+
+        <!-- Blocked Panel (Hidden by default) -->
+        <div
+          id="blocked-panel"
+          class="hidden bg-red-600 text-white card p-8 rounded-xl text-center"
+        >
+          <div class="text-6xl mb-4">🚫</div>
+          <h2 class="text-3xl font-extrabold mb-2">ACCESS DENIED</h2>
+          <p class="text-lg font-medium mb-4">
+            The page
+            <span id="blocked-url-display" class="font-bold underline"></span>
+            is currently blocked by the extension settings.
+          </p>
+
+          <form id="unblock-form" class="mt-6 max-w-sm mx-auto">
+            <input
+              type="password"
+              id="block-attempt-password"
+              placeholder="Enter Secret Password to Unblock"
+              class="p-3 rounded-lg w-full text-gray-900 mb-4 border-2 border-red-800 focus:border-yellow-400"
+            />
+            <button
+              type="submit"
+              class="px-6 py-3 w-full bg-yellow-400 text-red-900 font-extrabold rounded-lg hover:bg-yellow-500 transition-colors"
+            >
+              TEMPORARILY UNBLOCK
+            </button>
+          </form>
+        </div>
+
+        <!-- Settings Panel -->
+        <div id="settings-panel" class="bg-white card p-8 rounded-xl space-y-6">
+          <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
+            Extension Configuration
+          </h2>
+
+          <div>
+            <label
+              for="new-password"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Set Secret Password
+            </label>
+            <input
+              type="password"
+              id="new-password"
+              placeholder="Enter new password (e.g., mysecret123)"
+              class="p-3 rounded-lg w-full text-gray-700"
+            />
+            <p class="mt-1 text-xs text-gray-500">
+              This password is required to access blocked pages.
+            </p>
+          </div>
+
+          <div>
+            <label
+              for="blocked-urls"
+              class="block text-sm font-medium text-gray-700 mb-1"
+            >
+              URLs to Block (One per line)
+            </label>
+            <textarea
+              id="blocked-urls"
+              rows="6"
+              placeholder="Enter partial or full URLs to block.
+Example:
+youtube.com
+netflix.com/browse
+reddit.com/r/Procrastination"
+              class="p-3 rounded-lg w-full text-gray-700 resize-y"
+            ></textarea>
+            <p class="mt-1 text-xs text-gray-500">
+              Any URL entered in the Test field containing these strings will be
+              blocked.
+            </p>
+          </div>
+
+          <div class="pt-4">
+            <button
+              id="save-button"
+              class="btn-primary w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700"
+            >
+              Save Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

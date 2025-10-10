@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Blocker Options</title>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="tailwind-4-1-14.js"></script>
+  </head>
+  <body class="p-4 sm:p-8 min-h-screen flex items-start justify-center">
+    <div class="w-full max-w-2xl mt-8">
+      <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
+        🔒 Extension Options: Page Blocker
+      </h1>
+      <p class="text-center text-gray-500 mb-8">
+        Configure your blocked sites here.
+      </p>
+
+      <!-- Main Application Content -->
+      <div id="app-content">
+        <!-- Settings Panel -->
+        <div id="settings-panel" class="bg-white card p-8 rounded-xl space-y-6">
+          <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
+            Extension Configuration
+          </h2>
+
+          <div class="pt-4">
+            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">At the moment we save all blocked sites in a free JSON hosting site. You can access and modify your data here.
+            </p>
+            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+                👉 <a href="https://www.npoint.io/docs/4a65cbcfe0556bbb9ace" 
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" 
+                target="_blank">https://www.npoint.io/docs/4a65cbcfe0556bbb9ace</a>
+            </p>
+            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+                Since we are not storing anything locally, changes are effective immediately. 
+                However please note that there are <strong class="font-semibold text-gray-900 dark:text-black">default blocked sites</strong> which are not meant to bypass. 
+                <ul class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
+                    <li>facebook.com</li>
+                    <li>youtube.com (allowed from 6pm to 10pm)</li>
+                </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
