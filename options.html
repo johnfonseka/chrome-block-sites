@@ -1,279 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page Blocker Options</title>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <script src="tailwind-4-1-14.js"></script>
-  </head>
-  <script src="helper.js"></script>
-  <body class="p-4 sm:p-8 min-h-screen flex items-start justify-center">
-    <div class="w-full max-w-2xl mt-8">
-      <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
-        🔒 Extension Options: Page Blocker
-      </h1>
-      <p class="text-center text-gray-500 mb-8">
-        Configure your blocked sites here.
-      </p>
 
-      <!-- Main Application Content -->
-      <div id="app-content">
-        <!-- Settings Panel -->
-        <div id="settings-panel" class="bg-white card p-8 rounded-xl space-y-6">
-          <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
-            Extension Configuration
-          </h2>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Blocker Options</title>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+  <script src="tailwind-4-1-14.js"></script>
+</head>
+<script src="helper.js"></script>
 
-          <div class="pt-4">
-            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">At the moment we save all blocked sites in a free JSON hosting site. You can access and modify your data here.
-            </p>
-            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
-                👉 <a href="https://www.npoint.io/docs/4a65cbcfe0556bbb9ace" 
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" 
-                target="_blank">https://www.npoint.io/docs/4a65cbcfe0556bbb9ace</a>
-            </p>
-            <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
-                Since we are not storing anything locally, changes are effective immediately. 
-                However please note that there are <strong class="font-semibold text-gray-900 dark:text-black">default blocked sites</strong> which are not meant to bypass. 
-                <ul class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
-                    <li>facebook.com</li>
-                    <li>youtube.com (allowed from 6pm to 10pm)</li>
-                </ul>
-            </p>
-          </div>
-        </div>
-        <div class="pt-4">
-          <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
-            Blocked Sites
-          </h2>
-        </div>
-        <div class="pt-4">
-          <ul id="blocked-sites-ul" class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside"></ul>
-        </div>
-        <div class="pt-4">
-          <form id="blocked-sites-form">
-            <div>
-              <div class="mb-5">
-                <label for="url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">URL</label>
-                <input type="text" id="url" class="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="www.example.com" required />
-            </div> 
-              <div class="grid md:grid-cols-3 md:gap-6">
-                <div class="relative z-0 w-full mb-5 group">
-                    <label for="underline_select" class="sr-only">Allow start time</label>
-                    <select id="start_time" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                        <option selected>Allow start time</option>
-                        <option value="00">00</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                    </select>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    <label for="underline_select" class="sr-only">Allow end time</label>
-                    <select id="end_time" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                        <option selected>Allow end time</option>
-                        <option value="00">00</option>
-                        <option value="01">01</option>
-                        <option value="02">02</option>
-                        <option value="03">03</option>
-                        <option value="04">04</option>
-                        <option value="05">05</option>
-                        <option value="06">06</option>
-                        <option value="07">07</option>
-                        <option value="08">08</option>
-                        <option value="09">09</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                    </select>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    <label for="underline_select" class="sr-only">Action</label>
-                    <select id="action" class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
-                        <option value="allow">Allow</option>
-                    </select>
-                </div>
-              </div>
-              <div class="mb-5">
-                <button class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800">Add to block sites</button>
-              </div>
-            </div>
-          </form>
-        </div>
+<body class="p-4 sm:p-8 min-h-screen flex items-start justify-center">
+  <div class="w-full max-w-2xl mt-8">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
+      🔒 Extension Options: Page Blocker
+    </h1>
+    <p class="text-center text-gray-500 mb-8">
+      Configure your blocked sites here.
+    </p>
+
+    <!-- Main Application Content -->
+    <div id="app-content">
+      <!-- Settings Panel -->
+      <div id="settings-panel" class="bg-white card p-8 rounded-xl space-y-6">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
+          Extension Configuration
+        </h2>
 
         <div class="pt-4">
-          <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
-            Explicitly allowed Sites
-          </h2>
-          <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 mt-4 dark:bg-gray-800 dark:text-yellow-300" role="alert">
-            <span class="font-medium">Note: </span> These sites will be allowed even if they are in the blocked list.
-          </div>
-        </div>
-        <div class="pt-4">
-          <ul id="allowed-sites-ul" class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside"></ul>
-        </div>
-        <div class="pt-4">
-          <form id="allowed-sites-form">
-            <div>
-              <div class="mb-5">
-                <label for="allowed_url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Allowed URL</label>
-                <input type="text" id="allowed_url" class="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="www.example.com" required />
-            </div> 
-              <div class="mb-5">
-                <button class="text-white bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800">Add to allowed list</button>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        <div class="pt-4">
-          <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
-            Submit your changes
-          </h2>
-          <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">Your changes will be saved to the JSON hosting site. Please enter your password to confirm changes.</p>
-          <blockquote class="text-xl italic font-semibold text-right text-gray-900 dark:text-gray">
-            <span class="font-medium">First time? </span> Choose a password and remember it. There is no password recovery. To help with content addiction, we do not allow changing configurations without the password.
-          </blockquote>
-          <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">If you are really struggling with content addiction such as short video addiction, ask someone you trust to choose a password and block unwanted sites for you. This way you will not be able to change blocked sites and you will be free before you know it!</p>
-          <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">Please note that if you remove this plugin, all changes will be lost except the password 😅 <br />You have to be tough to fight with addictions!</p>
-          <form id="password-form" class="mt-4">
-            <div class="flex">
-              <div class="relative w-full">
-                  <input type="password" id="password" class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Password" required />
-                  <button type="submit" class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save Changes</button>
-              </div>
-            </div>
-          </form>
+          <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">At the moment we save all blocked sites in
+            a free JSON hosting site. You can access and modify your data here.
+          </p>
+          <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+            👉 <a href="https://www.npoint.io/docs/4a65cbcfe0556bbb9ace"
+              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              target="_blank">https://www.npoint.io/docs/4a65cbcfe0556bbb9ace</a>
+          </p>
+          <p class="mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400">
+            Since we are not storing anything locally, changes are effective immediately.
+            However please note that there are <strong class="font-semibold text-gray-900 dark:text-black">default
+              blocked sites</strong> which are not meant to bypass.
+          <ul class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
+            <li>facebook.com</li>
+            <li>youtube.com (allowed from 6pm to 10pm)</li>
+          </ul>
+          </p>
         </div>
       </div>
+      <div class="pt-4">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
+          Blocked Sites
+        </h2>
+      </div>
+      <div class="pt-4">
+        <ul id="blocked-sites-ul"
+          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
+        </ul>
+      </div>
+      <div class="pt-4">
+        <form id="blocked-sites-form">
+          <div>
+            <div class="mb-5">
+              <label for="url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">URL</label>
+              <input type="text" id="url"
+                class="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="www.example.com" required />
+            </div>
+            <div class="grid md:grid-cols-3 md:gap-6">
+              <div class="relative z-0 w-full mb-5 group">
+                <label for="underline_select" class="sr-only">Allow start time</label>
+                <select id="start_time"
+                  class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                  <option selected>Allow start time</option>
+                  <option value="00">00</option>
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                  <option value="08">08</option>
+                  <option value="09">09</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                  <option value="16">16</option>
+                  <option value="17">17</option>
+                  <option value="18">18</option>
+                  <option value="19">19</option>
+                  <option value="20">20</option>
+                  <option value="21">21</option>
+                  <option value="22">22</option>
+                </select>
+              </div>
+              <div class="relative z-0 w-full mb-5 group">
+                <label for="underline_select" class="sr-only">Allow end time</label>
+                <select id="end_time"
+                  class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                  <option selected>Allow end time</option>
+                  <option value="00">00</option>
+                  <option value="01">01</option>
+                  <option value="02">02</option>
+                  <option value="03">03</option>
+                  <option value="04">04</option>
+                  <option value="05">05</option>
+                  <option value="06">06</option>
+                  <option value="07">07</option>
+                  <option value="08">08</option>
+                  <option value="09">09</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                  <option value="13">13</option>
+                  <option value="14">14</option>
+                  <option value="15">15</option>
+                  <option value="16">16</option>
+                  <option value="17">17</option>
+                  <option value="18">18</option>
+                  <option value="19">19</option>
+                  <option value="20">20</option>
+                  <option value="21">21</option>
+                  <option value="22">22</option>
+                  <option value="23">23</option>
+                </select>
+              </div>
+              <div class="relative z-0 w-full mb-5 group">
+                <label for="underline_select" class="sr-only">Action</label>
+                <select id="action"
+                  class="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+                  <option value="allow">Allow</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-5">
+              <button
+                class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800">Add
+                to block sites</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="pt-4">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
+          Explicitly allowed Sites
+        </h2>
+        <div class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 mt-4 dark:bg-gray-800 dark:text-yellow-300"
+          role="alert">
+          <span class="font-medium">Note: </span> These sites will be allowed even if they are in the blocked list.
+        </div>
+      </div>
+      <div class="pt-4">
+        <ul id="allowed-sites-ul"
+          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
+        </ul>
+      </div>
+      <div class="pt-4">
+        <form id="allowed-sites-form">
+          <div>
+            <div class="mb-5">
+              <label for="allowed_url" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Allowed
+                URL</label>
+              <input type="text" id="allowed_url"
+                class="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="www.example.com" required />
+            </div>
+            <div class="mb-5">
+              <button
+                class="text-white bg-gray-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800">Add
+                to allowed list</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="pt-4">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
+          Submit your changes
+        </h2>
+        <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">Your changes will be saved to the JSON hosting site.
+          Please enter your password to confirm changes.</p>
+        <blockquote class="text-xl italic font-semibold text-right text-gray-900 dark:text-gray">
+          <span class="font-medium">First time? </span> Choose a password and remember it. There is no password
+          recovery. To help with content addiction, we do not allow changing configurations without the password.
+        </blockquote>
+        <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">If you are really struggling with content addiction such
+          as short video addiction, ask someone you trust to choose a password and block unwanted sites for you. This
+          way you will not be able to change blocked sites and you will be free before you know it!</p>
+        <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">Please note that if you remove this plugin, all changes
+          will be lost except the password 😅 <br />You have to be tough to fight with addictions!</p>
+        <form id="password-form" class="mt-4">
+          <div class="flex">
+            <div class="relative w-full">
+              <input type="password" id="password"
+                class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                placeholder="Password" required />
+              <button type="submit"
+                class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save
+                Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-    <script type="module">
-        const { blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl } = await fetchJson("https://api.npoint.io/4a65cbcfe0556bbb9ace");
+  </div>
+  <script type="module">
+    const {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl} = await fetchJson("https://api.npoint.io/4a65cbcfe0556bbb9ace");
 
-        const listBlockedSites = () => {
-          const blocked_sites_ul_content = blockList.map(site => {
-              if (site.allow_on_time) {
-                  return `<li>${site.url} (allowed from ${site.time.s.toString().padStart(2, '0')} to ${site.time.e.toString().padStart(2, '0')}) <a href="#">⌫</a></li>`;
-              } else {
-                  return `<li>${site.url} <a href="#">⌫</a></li>`;
-              }
-          }).join('');
-          document.getElementById('blocked-sites-ul').innerHTML = blocked_sites_ul_content;
+    const listBlockedSites = () => {
+      const blocked_sites_ul_content = blockList.map(site => {
+        if (site.allow_on_time) {
+          return `<li>${site.url} (allowed from ${site.time.s.toString().padStart(2, '0')} to ${site.time.e.toString().padStart(2, '0')}) <a href="#">⌫</a></li>`;
+        } else {
+          return `<li>${site.url} <a href="#">⌫</a></li>`;
         }
-        listBlockedSites();
+      }).join('');
+      document.getElementById('blocked-sites-ul').innerHTML = blocked_sites_ul_content;
+    }
+    listBlockedSites();
 
-        const listAllowedSites = () => {
-          const allowed_sites_ul_content = explicitlyAllowedUrl.map(site => {
-              return `<li>${site} <a href="#">⌫</a></li>`;
-          }).join('');
-          document.getElementById('allowed-sites-ul').innerHTML = allowed_sites_ul_content;
-        }
-        listAllowedSites();
+    const listAllowedSites = () => {
+      const allowed_sites_ul_content = explicitlyAllowedUrl.map(site => {
+        return `<li>${site} <a href="#">⌫</a></li>`;
+      }).join('');
+      document.getElementById('allowed-sites-ul').innerHTML = allowed_sites_ul_content;
+    }
+    listAllowedSites();
 
-        document.getElementById('allowed-sites-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const allowed_url = document.getElementById('allowed_url').value;
-            explicitlyAllowedUrl.push(allowed_url);
-            listAllowedSites();
+    document.getElementById('allowed-sites-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const allowed_url = document.getElementById('allowed_url').value;
+      explicitlyAllowedUrl.push(allowed_url);
+      listAllowedSites();
 
-            const updatedData = { blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl };
-            console.log('Updated Data:', updatedData);
+      const updatedData = {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl};
+      console.log('Updated Data:', updatedData);
 
-            // Send updated data to npoint.io
-            // try {
-            //     const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
-            //         method: 'PUT',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(updatedData),
-            //     });
+      // Send updated data to npoint.io
+      // try {
+      //     const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
+      //         method: 'PUT',
+      //         headers: {
+      //             'Content-Type': 'application/json',
+      //         },
+      //         body: JSON.stringify(updatedData),
+      //     });
 
-            //     if (response.ok) {
-            //         alert('Site added successfully!');
-            //         location.reload(); // Reload to reflect changes
-            //     } else {
-            //         alert('Failed to update the data. Please try again.');
-            //     }
-            // } catch (error) {
-            //     console.error('Error updating data:', error);
-            //     alert('An error occurred. Please try again.');
-            // }
-        });
+      //     if (response.ok) {
+      //         alert('Site added successfully!');
+      //         location.reload(); // Reload to reflect changes
+      //     } else {
+      //         alert('Failed to update the data. Please try again.');
+      //     }
+      // } catch (error) {
+      //     console.error('Error updating data:', error);
+      //     alert('An error occurred. Please try again.');
+      // }
+    });
 
-        document.getElementById('blocked-sites-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const url = document.getElementById('url').value;
-            const start_time = document.getElementById('start_time').value;
-            const end_time = document.getElementById('end_time').value;
-            const action = document.getElementById('action').value;
+    document.getElementById('blocked-sites-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = document.getElementById('url').value;
+      const start_time = document.getElementById('start_time').value;
+      const end_time = document.getElementById('end_time').value;
+      const action = document.getElementById('action').value;
 
-            if (action === 'allow') {
-                explicitlyAllowedUrl.push(url);
-            }
+      if (action === 'allow') {
+        explicitlyAllowedUrl.push(url);
+      }
 
-            let newSite = { url, allow_on_time: false };
-            if (start_time !== 'Allow start time' && end_time !== 'Allow end time') {
-                newSite = { url, allow_on_time: true, time: { s: parseInt(start_time), e: parseInt(end_time) } };
-            }
-            blockList.push(newSite);
-            listBlockedSites();
+      let newSite = {url, allow_on_time: false};
+      if (start_time !== 'Allow start time' && end_time !== 'Allow end time') {
+        newSite = {url, allow_on_time: true, time: {s: parseInt(start_time), e: parseInt(end_time)}};
+      }
+      blockList.push(newSite);
+      listBlockedSites();
 
-            const updatedData = { blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl };
-            console.log('Updated Data:', updatedData);
+      const updatedData = {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl};
+      console.log('Updated Data:', updatedData);
 
-            // Send updated data to npoint.io
-            // try {
-            //     const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
-            //         method: 'PUT',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(updatedData),
-            //     });
+      // Send updated data to npoint.io
+      // try {
+      //     const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
+      //         method: 'PUT',
+      //         headers: {
+      //             'Content-Type': 'application/json',
+      //         },
+      //         body: JSON.stringify(updatedData),
+      //     });
 
-            //     if (response.ok) {
-            //         alert('Site added successfully!');
-            //         location.reload(); // Reload to reflect changes
-            //     } else {
-            //         alert('Failed to update the data. Please try again.');
-            //     }
-            // } catch (error) {
-            //     console.error('Error updating data:', error);
-            //     alert('An error occurred. Please try again.');
-            // }
-        });
-    </script>
-  </body>
+      //     if (response.ok) {
+      //         alert('Site added successfully!');
+      //         location.reload(); // Reload to reflect changes
+      //     } else {
+      //         alert('Failed to update the data. Please try again.');
+      //     }
+      // } catch (error) {
+      //     console.error('Error updating data:', error);
+      //     alert('An error occurred. Please try again.');
+      // }
+    });
+  </script>
+</body>
+
 </html>
