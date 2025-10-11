@@ -2,13 +2,43 @@
 
 **Motivation**
 
-I am wasting so much of my time or reels and short videos. This is now affecting my carrer and other aspects of life. I am suspecting this causes stress and even some psycological problems like unable to keep my attention and no motivation etc.
-Hence I decided to go ahead and build a simple plugin to block these sites. Particularly facebook and youtube. But youtube music is allowed.
+I'm finding that the time spent on short-form video content, such as reels, is becoming excessive. This consumption is now significantly impacting my career and other key aspects of my life. I suspect it is contributing to increased stress and several cognitive issues, including a diminished attention span and a lack of motivation.
+
+To address this, I have decided to develop a simple plugin to block access to these platforms, specifically Facebook and YouTube (while YouTube Music will remain accessible).
+
+## Configurations
 
 Blocked sites are stored at
 https://www.npoint.io/docs/4a65cbcfe0556bbb9ace
 
-TODO
+**JSON format**
+
+```
+[
+  {
+    "url": "facebook.com"
+  },
+  {
+    "url": "youtube.com",
+    "time": {
+      "s": 18,
+      "e": 22
+    },
+    "allow_on_time": true
+  },
+  ...
+]
+```
+
+**Functions**
+
+If we have only the URL in the configurations, it will be simply blocked whole day.
+
+But if we have a time specified and `allow_on_time` flag set, then depending on the time, period and action, site will be either blocked or allowed.
+
+Since the implementation is **blocked first**, `time` and `allow_on_time` can actually be used only to timely allow a site. But not timely block a site. That means, `allow_on_time: false` does not make any difference.
+
+## TODO
 
 - Add keyword based blocks
 - Add password bypass
