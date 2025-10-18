@@ -19,3 +19,8 @@ async function fetchJson(url) {
     return [];
   }
 }
+
+var removeSite = (url, isAllowed) => {};
+var attachRemoveSiteHandler = () => {};
+var showSaveMessage = (message, isError = false) => {};
+var handleFinishSave = (saveChangesBtn, spinner, message, error) => {};

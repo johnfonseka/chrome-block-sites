@@ -21,9 +21,9 @@ https://www.npoint.io/docs/4a65cbcfe0556bbb9ace
 
 ```
 {
+  "password": "my-pass",
   "allowed_sites": [
     "music.youtube.com",
-    ...
   ],
   "blocked_sites": [
     {
@@ -37,7 +37,14 @@ https://www.npoint.io/docs/4a65cbcfe0556bbb9ace
       },
       "allow_on_time": true
     },
-    ...
+    {
+      "url": "primevideo.com",
+      "time": {
+        "s": 11,
+        "e": 13
+      },
+      "allow_on_time": true
+    }
   ]
 }
 ```

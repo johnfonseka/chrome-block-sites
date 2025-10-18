@@ -8,7 +8,7 @@
   <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <script src="tailwind-4-1-14.js"></script>
 </head>
-<script src="helper.js"></script>
+<script src="./helper.js"></script>
 
 <body class="p-4 sm:p-8 min-h-screen flex items-start justify-center">
   <div class="w-full max-w-2xl mt-8">
@@ -54,7 +54,8 @@
       </div>
       <div class="pt-4">
         <ul id="blocked-sites-ul"
-          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
+          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside"
+          onclick="attachRemoveSiteHandler()">
         </ul>
       </div>
       <div class="pt-4">
@@ -156,7 +157,8 @@
       </div>
       <div class="pt-4">
         <ul id="allowed-sites-ul"
-          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
+          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside"
+          onclick="attachRemoveSiteHandler()">
         </ul>
       </div>
       <div class="pt-4">
@@ -191,32 +193,36 @@
         <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">If you are really struggling with content addiction such
           as short video addiction, ask someone you trust to choose a password and block unwanted sites for you. This
           way you will not be able to change blocked sites and you will be free before you know it!</p>
-        <p class="mb-3 text-gray-500 dark:text-gray-400 mt-4">Please note that if you remove this plugin, all changes
-          will be lost except the password 😅 <br />You have to be tough to fight with addictions!</p>
         <form id="password-form" class="mt-4">
           <div class="flex">
             <div class="relative w-full">
               <input type="password" id="password"
-                class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
-                placeholder="Password" required />
-              <button type="submit"
-                class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save
-                Changes</button>
+              class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+              placeholder="Password" required />
+              <button 
+              id="save-changes-btn"
+              type="submit"
+              class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <div id="save-spinner" class="w-4 h-4 border-1 border-white-500 border-t-transparent rounded-full animate-spin" style="display: none;"></div> Save Changes
+              </button>
             </div>
+          </div>
+          <div class="flex">
+            <div class="relative w-full mt-4" id="save-status"></div>
           </div>
         </form>
       </div>
     </div>
   </div>
   <script type="module">
-    const {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl} = await fetchJson("https://api.npoint.io/4a65cbcfe0556bbb9ace");
+    const {password: originalPassword, blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl} = await fetchJson("https://api.npoint.io/4a65cbcfe0556bbb9ace");
 
     const listBlockedSites = () => {
       const blocked_sites_ul_content = blockList.map(site => {
         if (site.allow_on_time) {
           return `<li>${site.url} (allowed from ${site.time.s.toString().padStart(2, '0')} to ${site.time.e.toString().padStart(2, '0')}) <a href="#">⌫</a></li>`;
         } else {
-          return `<li>${site.url} <a href="#">⌫</a></li>`;
+          return `<li>${site.url} <a>⌫</a></li>`;
         }
       }).join('');
       document.getElementById('blocked-sites-ul').innerHTML = blocked_sites_ul_content;
@@ -225,7 +231,7 @@
 
     const listAllowedSites = () => {
       const allowed_sites_ul_content = explicitlyAllowedUrl.map(site => {
-        return `<li>${site} <a href="#">⌫</a></li>`;
+        return `<li>${site} <a>⌫</a></li>`;
       }).join('');
       document.getElementById('allowed-sites-ul').innerHTML = allowed_sites_ul_content;
     }
@@ -239,27 +245,6 @@
 
       const updatedData = {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl};
       console.log('Updated Data:', updatedData);
-
-      // Send updated data to npoint.io
-      // try {
-      //     const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
-      //         method: 'PUT',
-      //         headers: {
-      //             'Content-Type': 'application/json',
-      //         },
-      //         body: JSON.stringify(updatedData),
-      //     });
-
-      //     if (response.ok) {
-      //         alert('Site added successfully!');
-      //         location.reload(); // Reload to reflect changes
-      //     } else {
-      //         alert('Failed to update the data. Please try again.');
-      //     }
-      // } catch (error) {
-      //     console.error('Error updating data:', error);
-      //     alert('An error occurred. Please try again.');
-      // }
     });
 
     document.getElementById('blocked-sites-form').addEventListener('submit', async (e) => {
@@ -282,29 +267,111 @@
 
       const updatedData = {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl};
       console.log('Updated Data:', updatedData);
-
-      // Send updated data to npoint.io
-      // try {
-      //     const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
-      //         method: 'PUT',
-      //         headers: {
-      //             'Content-Type': 'application/json',
-      //         },
-      //         body: JSON.stringify(updatedData),
-      //     });
-
-      //     if (response.ok) {
-      //         alert('Site added successfully!');
-      //         location.reload(); // Reload to reflect changes
-      //     } else {
-      //         alert('Failed to update the data. Please try again.');
-      //     }
-      // } catch (error) {
-      //     console.error('Error updating data:', error);
-      //     alert('An error occurred. Please try again.');
-      // }
     });
-  </script>
+
+    const saveChanges = async () => {
+      const saveChangesBtn = document.getElementById('save-changes-btn');
+      saveChangesBtn.disabled = true;
+      const spinner = document.getElementById('save-spinner');
+      spinner.style.display = 'inline-block';
+      const password = document.getElementById('password').value;
+      if (!password) {
+        handleFinishSave(saveChangesBtn, spinner, 'Please enter your password.', true);
+        return;
+      }
+      if (password !== originalPassword) {
+        handleFinishSave(saveChangesBtn, spinner, 'Incorrect password. Please try again.', true);
+        return;
+      }
+      const json = JSON.stringify({
+        password: password,
+        blocked_sites: blockList,
+        allowed_sites: explicitlyAllowedUrl
+      });
+      try {
+        const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json,
+        });
+
+        if (response.ok) {
+          handleFinishSave(saveChangesBtn, spinner, 'Changes saved successfully!', false);
+        } else {
+          handleFinishSave(saveChangesBtn, spinner, 'Failed to save changes. Please check your password and try again.', true);
+        }
+      } catch (error) {
+        console.error('[Block Sites][Save Error]', error);
+        handleFinishSave(saveChangesBtn, spinner, 'An error occurred. Please try again.', true);
+      }
+    }
+
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await saveChanges();
+    });
+
+    showSaveMessage = (message, isError = false) => {
+      const success_alert = (message) => `<div id="success-alert" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                <span class="font-medium">Success!</span> ${message}
+              </div>`;
+      const error_alert = (message) => `<div id="error-alert" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                <span class="font-medium">Error!</span> ${message}
+              </div>`;
+      const getAlertDiv = isError ? error_alert(message) : success_alert(message);
+      const saveStatusDiv = document.getElementById('save-status');
+      saveStatusDiv.innerHTML = getAlertDiv;
+      setTimeout(() => {
+        const alertDivId = isError ? 'error-alert' : 'success-alert';
+        const alertDiv = document.getElementById(alertDivId);
+        if (alertDiv) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+
+    handleFinishSave = (saveChangesBtn, spinner, message, error) => {
+      showSaveMessage(message, error);
+      saveChangesBtn.disabled = false;
+      spinner.style.display = 'none';
+    }
+
+    removeSite = (url, isAllowed) => {
+      console.log('Removing site:', url, 'isAllowed:', isAllowed);
+      if (isAllowed) {
+        const index = explicitlyAllowedUrl.indexOf(url);
+        if (index > -1) {
+          explicitlyAllowedUrl.splice(index, 1);
+        }
+        listAllowedSites();
+      } else {
+        const index = blockList.findIndex(site => site.url === url);
+        if (index > -1) {
+          blockList.splice(index, 1);
+        }
+        listBlockedSites();
+      }
+    }
+
+    attachRemoveSiteHandler = () => {
+      document.querySelectorAll('#blocked-sites-ul li a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const url = e.target.parentElement.textContent.replace(' ⌫', '').trim();
+          removeSite(url, false);
+        });
+      });
+      document.querySelectorAll('#allowed-sites-ul li a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const url = e.target.parentElement.textContent.replace(' ⌫', '').trim();
+          removeSite(url, true);
+        });
+      });
+    }
+</script>
 </body>
 
 </html>

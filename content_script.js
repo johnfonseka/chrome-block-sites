@@ -101,6 +101,23 @@ const showBlockerOverlay = () => {
   document.body.style.overflow = "hidden";
 };
 
+const stopAllMedia = () => {
+  try {
+    const mediaElements = [...document.querySelectorAll("video, audio")];
+
+    mediaElements.forEach((media) => {
+      if (typeof media.pause === "function") {
+        media.pause();
+      }
+      media.volume = 0;
+      media.removeAttribute("src");
+      media.load();
+    });
+  } catch (e) {
+    console.warn("[Blocker] Error stopping media elements:", e);
+  }
+};
+
 // Main execution function
 const checkAndBlock = async () => {
   const { blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl } =
@@ -112,6 +129,7 @@ const checkAndBlock = async () => {
   defaultBlockedSites.map((a) => blockList.push(a));
   const iscurrentUrlBlocked = blockList.some(isRuleBlocked);
   if (iscurrentUrlBlocked) {
+    stopAllMedia();
     // Clear the entire page content before showing the overlay
     document.documentElement.innerHTML =
       "<html><head><title>Blocked</title></head><body></body></html>";
