@@ -53,9 +53,14 @@ https://www.npoint.io/docs/4a65cbcfe0556bbb9ace
 
 If we have only the URL in the configurations, it will be simply blocked whole day.
 
-But if we have a time specified and `allow_on_time` flag set, then depending on the time, period and action, site will be either blocked or allowed.
+But if we have a time specified and `allow_on_time` flag set, then depending on the time, period and action, site will be allowed.
 
-Since the implementation is **blocked first**, `time` and `allow_on_time` can actually be used only to timely allow a site. But not timely block a site. That means, `allow_on_time: false` does not make any difference.
+Since the implementation is **blocked first**, `time` and `allow_on_time` can actually be used only to timely allow a site. But not timely block a site. That means, `allow_on_time: false` does not make any difference; hence it is not provided.
+
+**Screen shots**
+
+![Options page](./images/ss_1.png)
+![Explicitly allowed urls](./images/ss_2.png)
 
 ## TODO
 
