@@ -85,7 +85,7 @@ handleFinishSave = (saveChangesBtn, spinner, message, error) => {
   spinner.style.display = "none";
 };
 
-removeSite = (url, isAllowed, blockList, allowedSites) => {
+removeSite = (url, isAllowed, blockList, explicitlyAllowedUrl) => {
   console.log("Removing site:", url, "isAllowed:", isAllowed);
   if (isAllowed) {
     const index = explicitlyAllowedUrl.indexOf(url);
