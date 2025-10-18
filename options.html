@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+<!--
+ * Author: johnfonseka <shan4max@gmail.com>
+ * Project: chrome-block-sites
+ * Date: 18/10/2025
+-->
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Page Blocker Options</title>
-  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <script src="tailwind-4-1-14.js"></script>
 </head>
 <script src="./helper.js"></script>
@@ -18,10 +21,7 @@
     <p class="text-center text-gray-500 mb-8">
       Configure your blocked sites here.
     </p>
-
-    <!-- Main Application Content -->
     <div id="app-content">
-      <!-- Settings Panel -->
       <div id="settings-panel" class="bg-white card p-8 rounded-xl space-y-6">
         <h2 class="text-2xl font-bold text-gray-800 border-b pb-3">
           Extension Configuration
@@ -54,8 +54,7 @@
       </div>
       <div class="pt-4">
         <ul id="blocked-sites-ul"
-          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside"
-          onclick="attachRemoveSiteHandler()">
+          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
         </ul>
       </div>
       <div class="pt-4">
@@ -157,8 +156,7 @@
       </div>
       <div class="pt-4">
         <ul id="allowed-sites-ul"
-          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside"
-          onclick="attachRemoveSiteHandler()">
+          class="max-w-md space-y-1 mb-3 text-lg text-gray-500 md:text-xl dark:text-gray-400 list-disc list-inside">
         </ul>
       </div>
       <div class="pt-4">
@@ -214,164 +212,6 @@
       </div>
     </div>
   </div>
-  <script type="module">
-    const {password: originalPassword, blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl} = await fetchJson("https://api.npoint.io/4a65cbcfe0556bbb9ace");
-
-    const listBlockedSites = () => {
-      const blocked_sites_ul_content = blockList.map(site => {
-        if (site.allow_on_time) {
-          return `<li>${site.url} (allowed from ${site.time.s.toString().padStart(2, '0')} to ${site.time.e.toString().padStart(2, '0')}) <a href="#">⌫</a></li>`;
-        } else {
-          return `<li>${site.url} <a>⌫</a></li>`;
-        }
-      }).join('');
-      document.getElementById('blocked-sites-ul').innerHTML = blocked_sites_ul_content;
-    }
-    listBlockedSites();
-
-    const listAllowedSites = () => {
-      const allowed_sites_ul_content = explicitlyAllowedUrl.map(site => {
-        return `<li>${site} <a>⌫</a></li>`;
-      }).join('');
-      document.getElementById('allowed-sites-ul').innerHTML = allowed_sites_ul_content;
-    }
-    listAllowedSites();
-
-    document.getElementById('allowed-sites-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const allowed_url = document.getElementById('allowed_url').value;
-      explicitlyAllowedUrl.push(allowed_url);
-      listAllowedSites();
-
-      const updatedData = {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl};
-      console.log('Updated Data:', updatedData);
-    });
-
-    document.getElementById('blocked-sites-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const url = document.getElementById('url').value;
-      const start_time = document.getElementById('start_time').value;
-      const end_time = document.getElementById('end_time').value;
-      const action = document.getElementById('action').value;
-
-      if (action === 'allow') {
-        explicitlyAllowedUrl.push(url);
-      }
-
-      let newSite = {url, allow_on_time: false};
-      if (start_time !== 'Allow start time' && end_time !== 'Allow end time') {
-        newSite = {url, allow_on_time: true, time: {s: parseInt(start_time), e: parseInt(end_time)}};
-      }
-      blockList.push(newSite);
-      listBlockedSites();
-
-      const updatedData = {blocked_sites: blockList, allowed_sites: explicitlyAllowedUrl};
-      console.log('Updated Data:', updatedData);
-    });
-
-    const saveChanges = async () => {
-      const saveChangesBtn = document.getElementById('save-changes-btn');
-      saveChangesBtn.disabled = true;
-      const spinner = document.getElementById('save-spinner');
-      spinner.style.display = 'inline-block';
-      const password = document.getElementById('password').value;
-      if (!password) {
-        handleFinishSave(saveChangesBtn, spinner, 'Please enter your password.', true);
-        return;
-      }
-      if (password !== originalPassword) {
-        handleFinishSave(saveChangesBtn, spinner, 'Incorrect password. Please try again.', true);
-        return;
-      }
-      const json = JSON.stringify({
-        password: password,
-        blocked_sites: blockList,
-        allowed_sites: explicitlyAllowedUrl
-      });
-      try {
-        const response = await fetch('https://api.npoint.io/4a65cbcfe0556bbb9ace', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: json,
-        });
-
-        if (response.ok) {
-          handleFinishSave(saveChangesBtn, spinner, 'Changes saved successfully!', false);
-        } else {
-          handleFinishSave(saveChangesBtn, spinner, 'Failed to save changes. Please check your password and try again.', true);
-        }
-      } catch (error) {
-        console.error('[Block Sites][Save Error]', error);
-        handleFinishSave(saveChangesBtn, spinner, 'An error occurred. Please try again.', true);
-      }
-    }
-
-    document.getElementById('password-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      await saveChanges();
-    });
-
-    showSaveMessage = (message, isError = false) => {
-      const success_alert = (message) => `<div id="success-alert" class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-                <span class="font-medium">Success!</span> ${message}
-              </div>`;
-      const error_alert = (message) => `<div id="error-alert" class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                <span class="font-medium">Error!</span> ${message}
-              </div>`;
-      const getAlertDiv = isError ? error_alert(message) : success_alert(message);
-      const saveStatusDiv = document.getElementById('save-status');
-      saveStatusDiv.innerHTML = getAlertDiv;
-      setTimeout(() => {
-        const alertDivId = isError ? 'error-alert' : 'success-alert';
-        const alertDiv = document.getElementById(alertDivId);
-        if (alertDiv) {
-          alertDiv.remove();
-        }
-      }, 5000);
-    }
-
-    handleFinishSave = (saveChangesBtn, spinner, message, error) => {
-      showSaveMessage(message, error);
-      saveChangesBtn.disabled = false;
-      spinner.style.display = 'none';
-    }
-
-    removeSite = (url, isAllowed) => {
-      console.log('Removing site:', url, 'isAllowed:', isAllowed);
-      if (isAllowed) {
-        const index = explicitlyAllowedUrl.indexOf(url);
-        if (index > -1) {
-          explicitlyAllowedUrl.splice(index, 1);
-        }
-        listAllowedSites();
-      } else {
-        const index = blockList.findIndex(site => site.url === url);
-        if (index > -1) {
-          blockList.splice(index, 1);
-        }
-        listBlockedSites();
-      }
-    }
-
-    attachRemoveSiteHandler = () => {
-      document.querySelectorAll('#blocked-sites-ul li a').forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const url = e.target.parentElement.textContent.replace(' ⌫', '').trim();
-          removeSite(url, false);
-        });
-      });
-      document.querySelectorAll('#allowed-sites-ul li a').forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const url = e.target.parentElement.textContent.replace(' ⌫', '').trim();
-          removeSite(url, true);
-        });
-      });
-    }
-</script>
+  <script src="options.js" type="module"></script>
 </body>
-
 </html>
