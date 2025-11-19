@@ -57,7 +57,7 @@ const saveChanges = async () => {
     );
     return;
   }
-  if (password !== originalPassword) {
+  if (password !== originalPassword && originalPassword.length > 0) {
     handleFinishSave(
       saveChangesBtn,
       spinner,
