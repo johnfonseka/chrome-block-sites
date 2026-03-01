@@ -8,7 +8,7 @@
 
 **Motivation**
 
-I'm finding that the time spent on short-form video content, such as reels, is becoming excessive. This consumption is now significantly impacting my career and other key aspects of my life. I suspect it is contributing to increased stress and several cognitive issues, including a diminished attention span and a lack of motivation.
+I found that I spent so many hours of time on short-form video content, such as reels, is becoming excessive. ~~This consumption is now impacting my career and other key aspects of my life.~~ I suspect it is contributing to increased stress and several cognitive issues, including a significantly less attention span and a lack of motivation.
 
 To address this, I have decided to develop a simple plugin to block access to these platforms, specifically Facebook and YouTube (while YouTube Music will remain accessible).
 
@@ -21,31 +21,41 @@ https://www.npoint.io/docs/4a65cbcfe0556bbb9ace
 
 ```
 {
-  "password": "my-pass",
-  "allowed_sites": [
-    "music.youtube.com",
+  "type": "object",
+  "required": [
+    "password",
+    "blocked_sites",
+    "allowed_sites"
   ],
-  "blocked_sites": [
-    {
-      "url": "facebook.com"
+  "properties": {
+    "password": {
+      "type": "string"
     },
-    {
-      "url": "youtube.com",
-      "time": {
-        "s": 18,
-        "e": 22
-      },
-      "allow_on_time": true
+    "blocked_sites": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        }
+      }
     },
-    {
-      "url": "primevideo.com",
-      "time": {
-        "s": 11,
-        "e": 13
-      },
-      "allow_on_time": true
+    "allowed_sites": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
     }
-  ]
+  }
 }
 ```
 
