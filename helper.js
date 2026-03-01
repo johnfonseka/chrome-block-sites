@@ -31,9 +31,9 @@ const listBlockedSites = (blockList) => {
   const blocked_sites_ul_content = blockList
     .map((site) => {
       if (site.allow_on_time) {
-        return `<li>${site.url} (allowed from ${site.time.s
+        return `<li>${site.url} (allowed from ${site.time?.s
           .toString()
-          .padStart(2, "0")} to ${site.time.e
+          .padStart(2, "0")} to ${site.time?.e
           .toString()
           .padStart(2, "0")}) <a>⌫</a></li>`;
       } else {

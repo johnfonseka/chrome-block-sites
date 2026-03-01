@@ -3,3 +3,12 @@
 .DS_Store
 .config.js
 /docker/
+firebase.html
+node_modules/
+package-lock.json
+package.json
+package/chrome-block-sites/firebase.html
+package/chrome-block-sites/icon-128.jpg
+package/chrome-block-sites/icon.jpg
+package/chrome-block-sites/package-lock.json
+package/chrome-block-sites/package.json

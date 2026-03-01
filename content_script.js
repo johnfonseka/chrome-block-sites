@@ -15,9 +15,9 @@ const allowedUrls = ["lankadeepa.lk"];
 // We are blocking the JSON hosting site itself to prevent users from
 // tampering with the blocked sites list.
 const defaultBlockedSites = [
-  {
-    url: 'https://www.npoint.io/docs/4a65cbcfe0556bbb9ace',
-  }
+  // {
+  //   url: "https://www.npoint.io/docs/4a65cbcfe0556bbb9ace",
+  // },
   {
     url: "facebook.com",
     time: { s: 18, e: 22 },
