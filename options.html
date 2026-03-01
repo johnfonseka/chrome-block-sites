@@ -188,15 +188,18 @@
           as short video addiction, ask someone you trust to choose a password and block unwanted sites for you. This
           way you will not be able to change blocked sites and you will be free before you know it!</p>
         <form id="password-form" class="mt-4">
-          <div class="flex">
-            <div class="relative w-full">
+          <div class="flex gap-0">
+            <div class="flex relative w-full gap-0">
               <input type="password" id="password"
-              class="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+              class=" p-2.5 w-2/5 z-20 w-half text-sm text-gray-900 bg-gray-50 border-r-0 rounded-s-lg rounded-s-gray-100 rounded-s-2 rounded-tl- border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
               placeholder="Password" required />
+              <input type="password" id="new_password"
+              class=" p-2.5 w-2/5 z-20 w-half text-sm text-gray-900 bg-gray-50 rounded-s-2 border border-l-0 border-r-0 border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+              placeholder="New Password" />
               <button 
               id="save-changes-btn"
               type="submit"
-              class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+              class="absolute w-1/5 top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 <div id="save-spinner" class="w-4 h-4 border-1 border-white-500 border-t-transparent rounded-full animate-spin" style="display: none;"></div> Save Changes
               </button>
             </div>

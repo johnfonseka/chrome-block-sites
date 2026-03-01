@@ -53,7 +53,7 @@ const saveChanges = async () => {
       saveChangesBtn,
       spinner,
       "Please enter your password.",
-      true
+      true,
     );
     return;
   }
@@ -62,12 +62,27 @@ const saveChanges = async () => {
       saveChangesBtn,
       spinner,
       "Incorrect password. Please try again.",
-      true
+      true,
     );
     return;
   }
+  const newPassword = document.getElementById("new_password").value;
+  let finalPassword = originalPassword;
+  if (newPassword) {
+    if (newPassword.length > 4) {
+      finalPassword = newPassword;
+    } else {
+      handleFinishSave(
+        saveChangesBtn,
+        spinner,
+        "New password must be at least 5 characters long.",
+        true,
+      );
+      return;
+    }
+  }
   const json = JSON.stringify({
-    password: password,
+    password: finalPassword,
     blocked_sites: blockList,
     allowed_sites: explicitlyAllowedUrl,
   });
@@ -85,14 +100,14 @@ const saveChanges = async () => {
         saveChangesBtn,
         spinner,
         "Changes saved successfully!",
-        false
+        false,
       );
     } else {
       handleFinishSave(
         saveChangesBtn,
         spinner,
         "Failed to save changes. Please check your password and try again.",
-        true
+        true,
       );
     }
   } catch (error) {
@@ -101,7 +116,7 @@ const saveChanges = async () => {
       saveChangesBtn,
       spinner,
       "An error occurred. Please try again.",
-      true
+      true,
     );
   }
 };
@@ -117,12 +132,12 @@ const attachRemoveSiteHandlers = () => {
   document
     .querySelectorAll("#blocked-sites-ul li a")
     .forEach((link) =>
-      attachRemoveSiteHandler(link, blockList, explicitlyAllowedUrl, false)
+      attachRemoveSiteHandler(link, blockList, explicitlyAllowedUrl, false),
     );
   document
     .querySelectorAll("#allowed-sites-ul li a")
     .forEach((link) =>
-      attachRemoveSiteHandler(link, blockList, explicitlyAllowedUrl, true)
+      attachRemoveSiteHandler(link, blockList, explicitlyAllowedUrl, true),
     );
 };
 
